@@ -16,7 +16,7 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
     const formData = new FormData(this);
     
 try {
-        const response = await fetch('/ask', {
+        const response = await fetch('/', {
             method: 'POST',
             body: formData
         });
