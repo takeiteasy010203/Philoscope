@@ -490,7 +490,7 @@ async def general_http_exception_handler(request: Request, exception: StarletteH
         else "An error occurred. Please check your request and try again."
     )
 
-    if request.url.path.startswith("/ask") or request.url.path.startswith("/download"):
+    if request.url.path.startswith("/") or request.url.path.startswith("/download"):
         return JSONResponse(
             status_code=exception.status_code,
             content={
