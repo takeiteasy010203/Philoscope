@@ -83,8 +83,8 @@ prompt = """
 """
 def generate_chart(question_data: dict):
     data_container = {  
-        "left_var": ['<-individualism', '<-rationalism', '<-universalism', '<-determinism'],
-        "right_var": ['collectivism->', 'irrationalism->', 'relativism->', 'free will->'],
+        "left_var": ['<-Individualism', '<-Rationalism', '<-Universalism', '<-Determinism'],
+        "right_var": ['Collectivism->', 'Irrationalism->', 'Relativism->', 'Free will->'],
         "right_scores": [],
         "left_scores": [],
         'label_list': [],
