@@ -57,14 +57,11 @@ async def lifespan(_app:FastAPI):
     yield
     await engine.dispose()
 
-def get_real_ip(request: Request) -> str:
-    forwarded = request.headers.get("X-Forwarded-For")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.client.host if request.client else "127.0.0.1"
+limiter = Limiter(key_func=get_remote_address)
 
-limiter = Limiter(key_func=get_real_ip)
+
 app = FastAPI(lifespan=lifespan)
+
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler) #type: ignore
 
@@ -85,9 +82,9 @@ prompt = """
         "a descriptive label, and the textual evidence/reasoning behind your decision. left_score is the score of the FIRST ideology in the field name.right_score is the score of the SECOND ideology. Both scores must be integers between 0 and 100. left_score + right_score must equal exactly 100."
 """
 def generate_chart(question_data: dict):
-    data_container = {  
-        "left_var": ['Individualism', 'Rationalism', 'Universalism', 'Determinism'],
-        "right_var": ['Collectivism', 'Irrationalism', 'Relativism', 'Free will'],
+    data_container = {
+        "left_var": ['individualism', 'rationalism', 'universalism', 'determinism'],
+        "right_var": ['collectivism', 'irrationalism', 'relativism', 'free will'],
         "right_scores": [],
         "left_scores": [],
         'label_list': [],
@@ -110,7 +107,7 @@ def generate_chart(question_data: dict):
     combined_var = zip(df['left_var'],df['right_var'])
 
 
-    df['combined']=[f'{left}   |   {right}' for left, right in combined_var]
+    df['combined']=[f'{left} - {right}' for left, right in combined_var]
 
     fig.add_trace(go.Bar(
         y=df["combined"],
@@ -147,14 +144,14 @@ def generate_chart(question_data: dict):
             text='PHILOSOPHICAL COMPASS',
             x=0.5,
             xanchor='center',
-            font=dict(size=24, color="#000000", family='Arial')
+            font=dict(size=24, color="#000000", family='Arial'),
         ),
         xaxis=dict(
                 range=[-100, 100],
                 showticklabels=False, 
-                showgrid=False,        
-                zeroline=True,         
-                zerolinecolor='black' 
+                showgrid=False,        # Ẩn các đường lưới dọc (nếu muốn biểu đồ tối giản)
+                zeroline=True,         # Giữ lại vạch đen ở giữa (trục 0)
+                zerolinecolor='black' # Tô đậm vạch trục 0 để làm mốc đối xứng
             ),
         xaxis_title="Score",
         yaxis_title="Category",
@@ -312,6 +309,7 @@ def generate_pdf(img: str, original: str, date_posted: str, session_id: str, evi
     return pdf_bytes
 
 @app.get("/")
+@limiter.limit("5/minute")
 def get_form(request:Request):
     return templates.TemplateResponse(
         request,
@@ -333,12 +331,7 @@ async def handle_form(
     if len(question) > 5000:
         raise HTTPException(status_code=400, detail="Input too long.")
    ######IP and Session ID     
-    forwarded = request.headers.get("X-Forwarded-For")
-    if forwarded:
-        user_ip = forwarded.split(",")[0].strip()
-        return user_ip
-    user_ip = request.client.host if (request and request.client) else "127.0.0.1"
-    return user_ip
+    user_ip=request.client.host if request.client else "Unknown"
     cookie_session = request.cookies.get("my_session")
     ####SOME SECURITY
     if cookie_session is None:
@@ -416,7 +409,6 @@ async def handle_form(
     new_question = Question(content=question, response_text=response_ai.text, session_id=session_id)
 
 
-
     try:
         db.add(new_question)
         await db.commit()
@@ -436,7 +428,6 @@ async def handle_form(
             "question_id": new_question.id,
             "date_posted": new_question.date_posted.isoformat(),
             "response": response_ai.text,
-            "request":request
         })
     
 
@@ -486,6 +477,15 @@ async def download(
     )
 
 
+
+    
+
+
+
+
+
+
+
 @app.exception_handler(StarletteHTTPException)
 async def general_http_exception_handler(request: Request, exception: StarletteHTTPException):
     
@@ -506,22 +506,20 @@ async def general_http_exception_handler(request: Request, exception: StarletteH
 
 @app.exception_handler(RateLimitExceeded)
 async def rate_limit_error(request:Request, exception: Exception):
-    logger.exception(exception)       
-    return templates.TemplateResponse(
-        request,
-        "error.html",
-        {
-            "status_code": status.HTTP_429_TOO_MANY_REQUESTS,
-            "title": status.HTTP_429_TOO_MANY_REQUESTS,
-            "message": "You're moving a bit too fast for our server to keep up!",
-        },
-        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+    logger.exception(exception)
+  
+    return JSONResponse(
+        status_code=429,
+        content={
+            "detail": "You are moving a bit too fast for our servers to keep up."
+        }
     )
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exception: Exception):
     
     logger.exception(exception)
+
     return JSONResponse(
         status_code=500,
         content={
