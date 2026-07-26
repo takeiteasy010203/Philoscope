@@ -50,7 +50,7 @@ logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a',format
 logger = logging.getLogger(__name__)
 
 
-@asynccontextmanager 
+@asynccontextmanager
 async def lifespan(_app:FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
