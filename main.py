@@ -517,6 +517,7 @@ async def rate_limit_error(request:Request, exception: Exception):
             "message": "You're moving a bit too fast for our server to keep up!",
         },
         status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+    )
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exception: Exception):
