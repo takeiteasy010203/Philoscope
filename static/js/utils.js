@@ -37,12 +37,12 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
         const result = await response.json();
 
 
-// ✅ Lấy dữ liệu từ result
+
 const question_id = result.question_id || '';
 const json_qdata = result.json_qdata || {};
 
 
-        // In response ra màn hình
+
 responseArea.innerHTML = `
             <div class="px-2 "> 
         <div class="plot-container">
@@ -131,6 +131,8 @@ const text_evidence_4 = content_block.querySelector('.text_evidence_4');
             text_evidence_4.textContent = json_qdata["determinism_free_will"].evidence;
     }
 )
+console.log(graph_data)
+console.log(graph_layout)
 const graphData = JSON.parse(result.graph_data);
 
 const graphLayout = JSON.parse(result.graph_layout);
@@ -154,7 +156,7 @@ Plotly.newPlot(
     } finally {
     
         btn.disabled = false;
-        text.textContent = '😎 Generate Report';
+        text.textContent = 'Generate Report';
         spinner.classList.add('d-none');
     }
 });
