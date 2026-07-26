@@ -16,7 +16,7 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
  try {
    
         const payload = new FormData(this);
-        const response = await fetch('https://thoughtscope-production.up.railway.app/', {
+        const response = await fetch('/', {
             method: 'POST',
             body: payload
         });
