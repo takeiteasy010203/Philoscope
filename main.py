@@ -57,11 +57,14 @@ async def lifespan(_app:FastAPI):
     yield
     await engine.dispose()
 
-limiter = Limiter(key_func=get_remote_address)
+def get_real_ip(request: Request) -> str:
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "127.0.0.1"
 
-
+limiter = Limiter(key_func=get_real_ip)
 app = FastAPI(lifespan=lifespan)
-
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler) #type: ignore
 
@@ -331,7 +334,12 @@ async def handle_form(
     if len(question) > 5000:
         raise HTTPException(status_code=400, detail="Input too long.")
    ######IP and Session ID     
-    user_ip=request.client.host if request.client else "Unknown"
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        user_ip = forwarded.split(",")[0].strip()
+        return user_ip
+    user_ip = request.client.host if (request and request.client) else "127.0.0.1"
+    return user_ip
     cookie_session = request.cookies.get("my_session")
     ####SOME SECURITY
     if cookie_session is None:
