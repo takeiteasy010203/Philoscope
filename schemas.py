@@ -34,7 +34,7 @@ class Compass(BaseModel):
     rationalism_irrationalism: Metrics
     universalism_relativism: Metrics
     determinism_free_will: Metrics
-    overall_summary: str = Field(description="Provide an overall analysis, key themes, closest philosophical traditions and an AI disclaimer")
+   
 
 class CompassResponse(BaseModel):
     philosophical_compass: Compass
