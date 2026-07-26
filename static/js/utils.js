@@ -116,26 +116,27 @@ const text_evidence_3 = content_block.querySelector('.text_evidence_3');
 //4
 const text_label_4 = content_block.querySelector('.text_label_4');
 const text_evidence_4 = content_block.querySelector('.text_evidence_4');
-    Object.entries(json_qdata).forEach(
-        ([mainKey, mainValue]) => {
-            text_label_1.textContent = json_qdata["individualism_collectivism"].label;
-            text_evidence_1.textContent = json_qdata["individualism_collectivism"].evidence;
-           
-            text_label_2.textContent = json_qdata["rationalism_irrationalism"].label;
-            text_evidence_2.textContent = json_qdata["rationalism_irrationalism"].evidence;
-           
-            text_label_3.textContent = json_qdata["universalism_relativism"].label;
-            text_evidence_3.textContent = json_qdata["universalism_relativism"].evidence;
-           
-            text_label_4.textContent = json_qdata["determinism_free_will"].label;
-            text_evidence_4.textContent = json_qdata["determinism_free_will"].evidence;
-    }
-)
-console.log(graph_data)
-console.log(graph_layout)
-const graphData = JSON.parse(result.graph_data);
 
+text_label_1.textContent = json_qdata["individualism_collectivism"].label;
+text_evidence_1.textContent = json_qdata["individualism_collectivism"].evidence;
+
+text_label_2.textContent = json_qdata["rationalism_irrationalism"].label;
+text_evidence_2.textContent = json_qdata["rationalism_irrationalism"].evidence;
+
+text_label_3.textContent = json_qdata["universalism_relativism"].label;
+text_evidence_3.textContent = json_qdata["universalism_relativism"].evidence;
+
+text_label_4.textContent = json_qdata["determinism_free_will"].label;
+text_evidence_4.textContent = json_qdata["determinism_free_will"].evidence;
+
+console.log(result.graph_data);
+console.log(result.graph_layout);
+
+const graphData = JSON.parse(result.graph_data);
 const graphLayout = JSON.parse(result.graph_layout);
+
+console.log(graphData);
+console.log(graphLayout);
 
 Plotly.newPlot(
     'chart-box',
