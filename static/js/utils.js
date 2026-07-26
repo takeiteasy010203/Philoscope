@@ -13,19 +13,28 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
     
 
 
-    const formData = new FormData(this);
-    
-try {
-        const response = await fetch('/', {
+ try {
+   
+        const payload = new FormData(this);
+        const response = await fetch('https://thoughtscope-production.up.railway.app/', {
             method: 'POST',
-            body: formData
+            body: payload
         });
 
-const result = await response.json();
-        
-if (!response.ok) {
-    throw new Error(result.detail);
-}
+
+        if (!response.ok) {
+            let errorText = 'Unknown Error';
+            try {
+                const errResult = await response.json();
+                errorText = errResult.detail || JSON.stringify(errResult);
+            } catch(e) {
+                errorText = `Server responded with status ${response.status}`;
+            }
+            throw new Error(errorText);
+        }
+
+
+        const result = await response.json();
 
 
 // ✅ Lấy dữ liệu từ result
