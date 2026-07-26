@@ -83,8 +83,8 @@ prompt = """
 """
 def generate_chart(question_data: dict):
     data_container = {  
-        "left_var": ['<-Individualism', '<-Rationalism', '<-Universalism', '<-Determinism'],
-        "right_var": ['Collectivism->', 'Irrationalism->', 'Relativism->', 'Free will->'],
+        "left_var": ['Individualism', 'Rationalism', 'Universalism', 'Determinism'],
+        "right_var": ['Collectivism', 'Irrationalism', 'Relativism', 'Free will'],
         "right_scores": [],
         "left_scores": [],
         'label_list': [],
@@ -107,7 +107,7 @@ def generate_chart(question_data: dict):
     combined_var = zip(df['left_var'],df['right_var'])
 
 
-    df['combined']=[f'{left} | {right}' for left, right in combined_var]
+    df['combined']=[f'{left}   |   {right}' for left, right in combined_var]
 
     fig.add_trace(go.Bar(
         y=df["combined"],
@@ -141,17 +141,17 @@ def generate_chart(question_data: dict):
     fig.update_layout(
         barmode="relative",
         title=dict(
-            text='Philosophical Compass',
+            text='PHILOSOPHICAL COMPASS',
             x=0.5,
             xanchor='center',
-            font=dict(size=24, color='#0d6efd', family='Arial'),
+            font=dict(size=24, color="#000000", family='Arial')
         ),
         xaxis=dict(
                 range=[-100, 100],
-                showticklabels=False,  # Ẩn hoàn toàn các con số (labels)
-                showgrid=False,        # Ẩn các đường lưới dọc (nếu muốn biểu đồ tối giản)
-                zeroline=True,         # Giữ lại vạch đen ở giữa (trục 0)
-                zerolinecolor='black' # Tô đậm vạch trục 0 để làm mốc đối xứng
+                showticklabels=False, 
+                showgrid=False,        
+                zeroline=True,         
+                zerolinecolor='black' 
             ),
         xaxis_title="Score",
         yaxis_title="Category",
@@ -409,7 +409,7 @@ async def handle_form(
     new_question = Question(content=question, response_text=response_ai.text, session_id=session_id)
 
 
-    summary = question_data["philosophical_compass"]["overall_summary"]
+
     try:
         db.add(new_question)
         await db.commit()
@@ -429,7 +429,7 @@ async def handle_form(
             "question_id": new_question.id,
             "date_posted": new_question.date_posted.isoformat(),
             "response": response_ai.text,
-            "summary": summary
+       
         })
     
 
