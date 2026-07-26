@@ -508,12 +508,15 @@ async def general_http_exception_handler(request: Request, exception: StarletteH
 @app.exception_handler(RateLimitExceeded)
 async def rate_limit_error(request:Request, exception: Exception):
     logger.exception(exception)       
-    return JSONResponse(
-        status_code=429,
-        content={
-            "detail": "You are moving a bit too fast for our servers to keep up."
-        }
-    )
+    return templates.TemplateResponse(
+        request,
+        "error.html",
+        {
+            "status_code": status.HTTP_429_TOO_MANY_REQUESTS,
+            "title": status.HTTP_429_TOO_MANY_REQUESTS,
+            "message": "You're moving a bit too fast for our server to keep up!",
+        },
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exception: Exception):
