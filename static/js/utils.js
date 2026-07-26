@@ -40,8 +40,7 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
 
 const question_id = result.question_id || '';
 const json_qdata = result.json_qdata || {};
-
-
+console.log(json_qdata)
 
 responseArea.innerHTML = `
             <div class="px-2 "> 
@@ -103,6 +102,7 @@ responseArea.innerHTML = `
 
     </div>
         `;
+     
 const content_block = document.getElementById('content_block')
 //1
 const text_label_1 = content_block.querySelector('.text_label_1');
