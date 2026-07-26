@@ -429,7 +429,7 @@ async def handle_form(
             "question_id": new_question.id,
             "date_posted": new_question.date_posted.isoformat(),
             "response": response_ai.text,
-       
+            "request":request
         })
     
 
@@ -477,15 +477,6 @@ async def download(
                 f'attachment; filename="report_{question.id}.pdf"'
         }
     )
-
-
-
-    
-
-
-
-
-
 
 
 @app.exception_handler(StarletteHTTPException)
