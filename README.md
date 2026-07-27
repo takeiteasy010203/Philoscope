@@ -17,6 +17,11 @@ An AI-powered web application that can help you analyze complex philosophical, p
 - PDF report generation
 - Philosophical profile
 - Secure session management
+
+# Dependencies
+- Gemini API
+- Database URL
+*These variables are located in the .env file
 # Tech Stack
 
 Backend
