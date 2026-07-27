@@ -11,18 +11,18 @@ An AI-powered web application that can help you analyze complex philosophical, p
 <img width="48%" height="887" alt="reportimg" src="https://github.com/user-attachments/assets/63eae6c1-86be-4f7e-a258-049bbdd7b7d6" />
 </p>
 
-# Features
+## Features
 - AI-powered text analysis
 - Interactive visualizations
 - PDF report generation
 - Philosophical profile
 - Secure session management
 
-# Dependencies
+## Dependencies
 - Gemini API
 - Database URL
 *These variables are located in the .env file
-# Tech Stack
+## Tech Stack
 
 Backend
 - FastAPI
