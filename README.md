@@ -1,4 +1,4 @@
-# Philoscope
+# ThoughtScope
 An AI-powered web application that can help you analyze complex philosophical, political texts through interactive visualizations
 ## Screenshots
 <p align="center">
