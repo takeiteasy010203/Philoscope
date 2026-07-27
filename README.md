@@ -18,6 +18,11 @@ An AI-powered web application that can help you analyze complex philosophical, p
 - Philosophical profile
 - Secure session management
 
+## Colour Palette
+- #5692f4
+- #ffffff
+- #263238
+
 ## Dependencies
 - Gemini API
 - Database URL
