@@ -43,6 +43,7 @@ import secrets
 from pydantic import field_serializer
 from reportlab.lib.units import inch    
 from reportlab.platypus import HRFlowable
+from slowapi.middleware import SlowAPIMiddleware
 
 print(load_dotenv(find_dotenv(), override=True))
 
@@ -64,7 +65,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler) #type: ignore
-
+app.add_middleware(SlowAPIMiddleware)
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/media", StaticFiles(directory="media"), name="media")
