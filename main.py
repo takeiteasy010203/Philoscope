@@ -335,7 +335,8 @@ async def handle_form(
     if x_forwarded_for:
         # The first IP in the list is always the actual user
         real_ip = x_forwarded_for.split(",")[0].strip()
-    real_ip = request.client.host      
+    else:
+        real_ip = request.client.host      
     
     cookie_session = request.cookies.get("my_session")
     ####SOME SECURITY
@@ -344,15 +345,7 @@ async def handle_form(
         new_session = UserSession(ip_address=real_ip, session_id=session_id) 
         db.add(new_session)
         await db.commit()
-        response.set_cookie(
-            key="my_session",
-            value=session_id,
-            httponly=True,
-            secure=True,
-            samesite='lax',
         )
-        
-
     else:
         result = await db.execute(select(UserSession).where(UserSession.session_id==cookie_session))
         session = result.scalars().first()
@@ -361,13 +354,6 @@ async def handle_form(
             new_session = UserSession(ip_address=user_ip, session_id=session_id) 
             db.add(new_session)
             await db.commit()
-            response.set_cookie(
-            key="my_session",
-            value=session_id,
-            httponly=True,
-            secure=True,
-            samesite='lax',
-        )
         else:
           session_id=session.session_id
 
@@ -425,7 +411,7 @@ async def handle_form(
     graph_data, graph_layout, img_plot = await run_in_threadpool(generate_chart, question_data)
     
    
-    return JSONResponse({   
+    data = {   
             "json_qdata": json_qdata,
             "graph_data": graph_data,
             "graph_layout": graph_layout,
@@ -433,7 +419,18 @@ async def handle_form(
             "question_id": new_question.id,
             "date_posted": new_question.date_posted.isoformat(),
             "response": response_ai.text,
-        })
+        }
+    json_response=JSONResponse(content=data)
+    if cookie_session is None or session is None:
+        json_response.set_cookie(
+            key="my_session",
+            value=session_id,
+            httponly=True,
+            secure=True,
+            samesite='lax',
+            max_age=60*60*24*365
+        )
+    return json_response
     
 
 @app.get('/download/{question_id}')
