@@ -18,7 +18,8 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
         const payload = new FormData(this);
         const response = await fetch('/', {
             method: 'POST',
-            body: payload
+            body: payload,
+            credentials: "include"
         });
 
 
