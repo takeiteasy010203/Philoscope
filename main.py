@@ -331,12 +331,17 @@ async def handle_form(
     if len(question) > 5000:
         raise HTTPException(status_code=400, detail="Input too long.")
    ######IP and Session ID     
-    user_ip=request.client.host if request.client else "Unknown"
+    x_forwarded_for = request.headers.get("x-forwarded-for")
+    if x_forwarded_for:
+        # The first IP in the list is always the actual user
+        real_ip = x_forwarded_for.split(",")[0].strip()
+    real_ip = request.client.host      
+    
     cookie_session = request.cookies.get("my_session")
     ####SOME SECURITY
     if cookie_session is None:
         session_id = secrets.token_hex(32)
-        new_session = UserSession(ip_address=user_ip, session_id=session_id) 
+        new_session = UserSession(ip_address=real_ip, session_id=session_id) 
         db.add(new_session)
         await db.commit()
         response.set_cookie(
