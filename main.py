@@ -345,7 +345,7 @@ async def handle_form(
         new_session = UserSession(ip_address=real_ip, session_id=session_id) 
         db.add(new_session)
         await db.commit()
-        )
+        
     else:
         result = await db.execute(select(UserSession).where(UserSession.session_id==cookie_session))
         session = result.scalars().first()
